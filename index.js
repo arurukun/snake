@@ -1,24 +1,21 @@
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
-// class SnakePart{
-//     constructor(x,y){
-//         this.x=x;
-//         this.y=y;
-//     }
-// }
+class SnakePart{
+    constructor(x,y){
+        this.x=x;
+        this.y=y;
+    }
+}
 
 let speed=4;
 
 let tileCount=20;
-let tileSize=canvas.width / tileCount -2;
+let tileSize=canvas.width / tileCount - 2;
 let headX=10;
 let headY=10;
 
-// const snakeParts=[];
-const snakePartsX=[];
-const snakePartsY=[];
-
+const snakeParts=[];
 let tailLenght=2;
 
 let appleX=10;
@@ -47,18 +44,18 @@ function drawScreen(){
 function drawSnake(){
     
     ctx.fillStyle="green";
-    for(let i=0; i < snakePartsX.length; i++){
-        ctx.fillRect(snakePartsX[i] * tileCount,snakePartsY[i] * tileCount,tileSize,tileSize);
+    for(let i=0; i < snakeParts.length; i++){
+        let part = snakeParts[i];
+        ctx.fillRect(part.x * tileCount,part.y * tileCount,tileSize,tileSize);
     }
+
     ctx.fillStyle="orange";
     ctx.fillRect(headX * tileCount,headY * tileCount,tileSize,tileSize);
+    
+    snakeParts.push(new SnakePart(headX,headY));
 
-    snakePartsX.push(headX);
-    snakePartsY.push(headY);
-
-    if(snakePartsX.length > tailLenght){
-        snakePartsX.shift();
-        snakePartsY.shift();
+    if(snakeParts.length > tailLenght){
+        snakeParts.shift();
     }
 }
 
@@ -88,7 +85,6 @@ function keyDown(event){
         yVelocity=-1;
         xVelocity=0;
     }
-
 
     // down
     if(event.keyCode == 40 && yVelocity != -1){
