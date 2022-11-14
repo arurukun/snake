@@ -1,12 +1,25 @@
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
+// class SnakePart{
+//     constructor(x,y){
+//         this.x=x;
+//         this.y=y;
+//     }
+// }
+
 let speed=4;
 
 let tileCount=20;
-let tileSize=canvas.width / tileCount;
+let tileSize=canvas.width / tileCount -2;
 let headX=10;
 let headY=10;
+
+// const snakeParts=[];
+const snakePartsX=[];
+const snakePartsY=[];
+
+let tailLenght=2;
 
 let appleX=10;
 let appleY=7;
@@ -32,8 +45,21 @@ function drawScreen(){
 }
 
 function drawSnake(){
+    
+    ctx.fillStyle="green";
+    for(let i=0; i < snakePartsX.length; i++){
+        ctx.fillRect(snakePartsX[i] * tileCount,snakePartsY[i] * tileCount,tileSize,tileSize);
+    }
     ctx.fillStyle="orange";
     ctx.fillRect(headX * tileCount,headY * tileCount,tileSize,tileSize);
+
+    snakePartsX.push(headX);
+    snakePartsY.push(headY);
+
+    if(snakePartsX.length > tailLenght){
+        snakePartsX.shift();
+        snakePartsY.shift();
+    }
 }
 
 function changeSnakePosition(){
@@ -50,6 +76,7 @@ function checkAppleCollision(){
     if (appleX == headX && appleY == headY){
         appleX = Math.floor(Math.random() * tileCount);
         appleY = Math.floor(Math.random() * tileCount);
+        tailLenght++
     }
 }
 
