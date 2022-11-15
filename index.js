@@ -16,7 +16,7 @@ let headX=10;
 let headY=10;
 
 const snakeParts=[];
-let tailLenght=2;
+let tailLength=2;
 
 let appleX=10;
 let appleY=7;
@@ -24,15 +24,78 @@ let appleY=7;
 let xVelocity=0;
 let yVelocity=0;
 
+let score=0;
+
+const gulpSound=new Audio("gulp.mp3");
+
 // game loop
 
 function drawGame(){
-    drawScreen();
     changeSnakePosition();
+    if(isGameOver()){
+        return;
+    }
+
+    drawScreen();
     checkAppleCollision();
     drawapple();
     drawSnake();
+    drawScore();
     setTimeout(drawGame, 1000 / speed);
+}
+
+function isGameOver(){
+    let gameOver=false;
+
+    if(yVelocity===0 && xVelocity===0) return false;
+
+    // wall
+    if(headX < 0){
+        gameOver=true;
+    }
+
+    else if(headX === tileCount){
+        gameOver=true;
+    }
+
+    else if(headY < 0){
+        gameOver=true;
+    }
+
+    else if(headY === tileCount){
+        gameOver=true;
+    }
+
+    for(let i=0; i < snakeParts.length; i++){
+        let part=snakeParts[i];
+        if(part.x===headX && part.y===headY){
+            gameOver=true;
+        }
+    }
+
+
+    if (gameOver){
+        ctx.fillStyle="white";
+        ctx.font="50px Verdana";
+
+        var gradient = ctx.createLinearGradient(0,0,canvas.width,0);
+        gradient.addColorStop("0","magenta");
+        gradient.addColorStop("0.5","blue");
+        gradient.addColorStop("1.0","red");
+        console.log(gradient)
+        
+        // fill with gradient
+        ctx.fillStyle=gradient;
+
+        ctx.fillText("Game Over!",canvas.width / 6.5, canvas.height / 2);
+    }
+    return gameOver;
+}
+
+function drawScore(){
+    ctx.fillStyle="white";
+    ctx.font="10px Verdana";
+    ctx.fillText("score " + score,canvas.width-50, 10);
 }
 
 
@@ -44,17 +107,15 @@ function drawScreen(){
 function drawSnake(){
     
     ctx.fillStyle="green";
-    for(let i=0; i < snakeParts.length; i++){
-        let part = snakeParts[i];
-        ctx.fillRect(part.x * tileCount,part.y * tileCount,tileSize,tileSize);
+    for (let i = 0; i < snakeParts.length; i++){
+        ctx.fillRect(snakeParts[i].x * tileCount,snakeParts[i].y * tileCount,tileSize,tileSize)
     }
 
     ctx.fillStyle="orange";
     ctx.fillRect(headX * tileCount,headY * tileCount,tileSize,tileSize);
     
     snakeParts.push(new SnakePart(headX,headY));
-
-    if(snakeParts.length > tailLenght){
+    if(snakeParts.length > tailLength){
         snakeParts.shift();
     }
 }
@@ -73,7 +134,9 @@ function checkAppleCollision(){
     if (appleX == headX && appleY == headY){
         appleX = Math.floor(Math.random() * tileCount);
         appleY = Math.floor(Math.random() * tileCount);
-        tailLenght++
+        tailLength++;
+        score++;
+        gulpSound.play();
     }
 }
 
